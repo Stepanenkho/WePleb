@@ -1,19 +1,33 @@
 package com.epitech.wepleb.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.fragments.BaseFragment;
 import com.epitech.wepleb.fragments.ContactsFragment;
 import com.epitech.wepleb.fragments.ProfileFragment;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.List;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -70,7 +84,55 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_add:
-                Toast.makeText(this, "Disponible prochainement", Toast.LENGTH_SHORT)
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                LayoutInflater inflater = getLayoutInflater();
+                View view = inflater.inflate(R.layout.dialog_profile_username, null);
+                TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
+                title.setText("Ajouter un contact");
+                final EditText mUsernameText = (EditText) view.findViewById(R.id.dialog_profile_username);
+                builder.setView(view)
+                        .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ParseQuery<ParseUser> userQuery = new ParseQuery<ParseUser>("_User");
+                                String mUsername = mUsernameText.getText().toString();
+                                userQuery.whereEqualTo("username", mUsername);
+
+                                userQuery.findInBackground(new FindCallback<ParseUser>() {
+                                    @Override
+                                    public void done(List<ParseUser> objects, ParseException e) {
+                                        if (e != null) {
+
+                                        } else if (objects != null && objects.size() > 0){
+                                            ParseUser user = objects.get(0);
+                                            mUsernameText.setText("Found " + user.getUsername());
+                                            ParseObject newContact = ParseObject.create("Contacts");
+                                            newContact.put("user1", mUser);
+                                            newContact.put("user2", user);
+                                            newContact.saveInBackground(new SaveCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    if (e != null)
+                                                        e.printStackTrace();
+                                                    else
+                                                        Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
+                                                            .setActionTextColor(Color.RED)
+                                                            .show();
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .create()
                         .show();
                 break;
             default:

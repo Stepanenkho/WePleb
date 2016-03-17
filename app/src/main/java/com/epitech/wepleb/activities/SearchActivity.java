@@ -20,6 +20,7 @@ import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 /**
  * Created by Eric on 16/03/2016.
@@ -59,20 +60,76 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
+            public void afterTextChanged(final Editable s) {
                 mAddButton.setText("Chercher l'id WePleb de : " + s);
+                mContactsAdapter.setQueryFactory(new ParseRecyclerQueryAdapter.QueryFactory() {
+                    @Override
+                    public ParseQuery create() {
+                        final ParseQuery<ParseObject> contactsQuery = new ParseQuery<>("Contacts");
+                        final ParseQuery<ParseObject> usersQuery = new ParseQuery<>("_User");
+                        usersQuery.whereStartsWith("username", s.toString());
+                        contactsQuery.whereMatchesQuery("user2", usersQuery);
+                        contactsQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
+                        return contactsQuery;
+                    }
+                });
+                mContactsAdapter.reload();
+/*
+                mContactsAdapter = new ParseRecyclerQueryAdapter<ParseObject>(getApplication(), ) {
+
+                    class ContactViewHolder extends RecyclerView.ViewHolder {
+                        TextView username;
+
+                        ContactViewHolder(View itemView) {
+                            super(itemView);
+                            username = (TextView) itemView.findViewById(R.id.item_contact_username);
+                        }
+                    }
+
+                    @Override
+                    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                        final View itemView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.item_contact, null);
+                        final ContactViewHolder viewHolder = new ContactViewHolder(itemView);
+                        itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ParseObject contact = getItem(viewHolder.getAdapterPosition());
+                                ParseObject user = contact.getParseUser("username");
+                                Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
+                                startChatActivity(user);
+                            }
+                        });
+                        return viewHolder;
+                    }
+
+                    @Override
+                    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+                        final ContactViewHolder viewHolder = (ContactViewHolder) holder;
+                        final ParseObject contact = getItem(position);
+                        final ParseUser user = contact.getParseUser("user2");
+                        try {
+                            String username = user.fetchIfNeeded().getUsername();
+                            viewHolder.username.setText(username);
+                        } catch (com.parse.ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+*/
+//                mContactsAdapter.notifyDataSetChanged();
             }
         });
 
         mContactsList = (RecyclerView)findViewById(R.id.rv_contacts_list);
         mContactsList.setHasFixedSize(true);
-        mContactsAdapter = new ParseRecyclerQueryAdapter<ParseObject>(this, new ParseRecyclerQueryAdapter.QueryFactory() {
+        mContactsAdapter = new ParseRecyclerQueryAdapter<ParseObject>(getApplicationContext(), new ParseRecyclerQueryAdapter.QueryFactory() {
             @Override
             public ParseQuery create() {
-                final ParseQuery<ParseObject> usersQuery = new ParseQuery<>("Contacts");
-                usersQuery.whereContains("user1", "Pleb");
-                usersQuery.include("user2");
-                return usersQuery;
+                final ParseQuery<ParseObject> contactsQuery = new ParseQuery<>("Contacts");
+                final ParseQuery<ParseObject> usersQuery = new ParseQuery<>("_User");
+                usersQuery.whereMatches("username", "hello");
+                contactsQuery.whereMatchesQuery("user2", usersQuery);
+                return contactsQuery;
             }
         }) {
 
@@ -93,7 +150,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onClick(View v) {
                         ParseObject contact = getItem(viewHolder.getAdapterPosition());
-                        ParseObject user = contact.getParseUser("user2");
+                        ParseObject user = contact.getParseUser("username");
                         Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
                         startChatActivity(user);
                     }
@@ -105,8 +162,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
                 final ContactViewHolder viewHolder = (ContactViewHolder) holder;
                 final ParseObject contact = getItem(position);
-                final ParseObject user = contact.getParseUser("user2");
-                viewHolder.username.setText(user.getString("username"));
+                final ParseUser user = contact.getParseUser("user2");
+                try {
+                    String username = user.fetchIfNeeded().getUsername();
+                    viewHolder.username.setText(username);
+                } catch (com.parse.ParseException e) {
+                    e.printStackTrace();
+                }
             }
         };
 
