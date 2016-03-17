@@ -116,9 +116,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onClick(View v) {
                         ParseObject contact = getItem(viewHolder.getAdapterPosition());
-                        ParseObject user = contact.getParseUser("username");
+                        ParseObject user = contact.getParseUser("user2");
                         Toast.makeText(getApplicationContext(), "Hello", Toast.LENGTH_SHORT).show();
-                        startChatActivity(user);
+                        startProfileActivity(user);
                     }
                 });
                 return viewHolder;
@@ -218,10 +218,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    private void startChatActivity(ParseObject user) {
-        final Intent chatIntent = new Intent(getApplicationContext(), ChatActivity.class);
-        chatIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        chatIntent.putExtra(ChatActivity.EXTRA_PROFILE_ID, user.getObjectId());
-        startActivity(chatIntent);
+    private void startProfileActivity(ParseObject user) {
+        final Intent profileIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+        profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        profileIntent.putExtra(ProfileActivity.EXTRA_PROFILE_ID, user.getObjectId());
+        startActivity(profileIntent);
     }
 }
