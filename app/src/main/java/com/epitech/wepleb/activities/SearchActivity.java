@@ -15,8 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +44,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private ImageButton mBackButton;
     private Button mAddButton;
 
-    private ProgressBar mProgressBar;
+    private FrameLayout mProgressBar;
     private RecyclerView mContactsList;
     private ParseRecyclerQueryAdapter<ParseObject> mContactsAdapter;
     private String mUsername;
@@ -60,7 +60,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         mSearchBar = (EditText) findViewById(R.id.search_bar);
         mBackButton = (ImageButton) findViewById(R.id.search_back);
         mAddButton = (Button) findViewById(R.id.add_button);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_progress_bar);
+        mProgressBar = (FrameLayout) findViewById(R.id.activity_progress_bar);
 
         mUsername = "";
 
@@ -151,11 +151,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 @Override
                 public void onLoading(ParseRecyclerQueryAdapter adapter) {
                     mProgressBar.setVisibility(View.VISIBLE);
+                    mContactsList.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onLoaded(ParseRecyclerQueryAdapter adapter, List<ParseObject> objects, Exception e) {
                     mProgressBar.setVisibility(View.GONE);
+                    mContactsList.setVisibility(View.VISIBLE);
                 }
             });
             mContactsList.setAdapter(mContactsAdapter);

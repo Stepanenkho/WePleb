@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class ContactsFragment extends BaseFragment {
 
-    private ProgressBar mProgressBar;
+    private FrameLayout mProgressBar;
     private RecyclerView mContactsList;
     private ParseRecyclerQueryAdapter<ParseObject> mContactsAdapter;
     private ParseUser mUser;
@@ -48,7 +48,7 @@ public class ContactsFragment extends BaseFragment {
     @Override
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_progress_bar);
+        mProgressBar = (FrameLayout) view.findViewById(R.id.fragment_progress_bar);
         mContactsList = (RecyclerView) view.findViewById(R.id.fragment_contacts_list);
         mContactsList.addItemDecoration(new DividerItemDecoration(ContactsFragment.this.getContext(), 1));
 
@@ -137,11 +137,13 @@ public class ContactsFragment extends BaseFragment {
             @Override
             public void onLoading(ParseRecyclerQueryAdapter adapter) {
                 mProgressBar.setVisibility(View.VISIBLE);
+                mContactsList.setVisibility(View.GONE);
             }
 
             @Override
             public void onLoaded(ParseRecyclerQueryAdapter adapter, List<ParseObject> objects, Exception e) {
                 mProgressBar.setVisibility(View.GONE);
+                mContactsList.setVisibility(View.VISIBLE);
             }
         });
 

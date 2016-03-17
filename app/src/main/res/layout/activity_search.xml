@@ -33,11 +33,16 @@
         android:textAllCaps="false"
         android:text="Chercher l'id WePleb de : "/>
 
-    <ProgressBar
+    <FrameLayout
         android:id="@+id/activity_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_contacts_list"
