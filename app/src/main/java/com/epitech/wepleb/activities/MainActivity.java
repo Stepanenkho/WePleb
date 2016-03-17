@@ -1,20 +1,19 @@
 package com.epitech.wepleb.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.fragments.BaseFragment;
 import com.epitech.wepleb.fragments.ContactsFragment;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.epitech.wepleb.fragments.ProfileFragment;
 import com.parse.ParseUser;
-
-import java.util.List;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -24,6 +23,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     //private TextView mUsernameText;
+    private Toolbar toolbar;
     private View mContentView;
     private View mMessagesButton;
     private View mContactsButton;
@@ -36,6 +36,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        setSupportActionBar(toolbar);
         mContentView = findViewById(R.id.activity_main_container);
         mMessagesButton = findViewById(R.id.activity_main_tab_messages);
         mContactsButton = findViewById(R.id.activity_main_tab_contacts);
@@ -52,6 +54,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUsernameText.setText(mUser.getUsername());
     }
     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.action_add:
+                Toast.makeText(this, "Disponible prochainement", Toast.LENGTH_SHORT)
+                        .show();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     public void onClick(View v) {
@@ -83,8 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
-                    //fragment = ProfileFragment.newInstance();
-                    Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
+                    fragment = ProfileFragment.newInstance();
                     break;
                 default:
                     break;

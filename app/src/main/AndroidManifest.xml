@@ -49,6 +49,7 @@
         <activity android:name=".activities.SignupActivity" />
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.ChatActivity" />
+        <activity android:name=".activities.SearchActivity" />
 
     </application>
 
