@@ -1,39 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <ImageView
         android:id="@+id/fragment_profile_picture"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:background="#ffffff" />
+        android:background="#ffffff"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/fragment_profile_username"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        style="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_gravity="center_horizontal"
+        android:alpha="0.75"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="heyoo?"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="30sp"
+        tools:text="plebasdz" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/fragment_profile_password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        style="@style/Widget.AppCompat.Button"
-        android:text="Changer de mot de passe"
-        />
+        android:layout_gravity="center"
+        android:background="#e74c3c"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="changer de mot de passe"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/fragment_profile_disconnect"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        style="@style/Widget.AppCompat.Button"
-        android:text="Se déconnecter" />
+        android:layout_gravity="center"
+        android:background="#2c3e50"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="déconnecter"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
 
 </LinearLayout>
