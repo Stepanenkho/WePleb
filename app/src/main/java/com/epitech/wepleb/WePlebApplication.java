@@ -56,6 +56,7 @@ public class WePlebApplication extends Application {
                 .cacheOnDisk(true)
                 .imageScaleType(ImageScaleType.EXACTLY)
                 .considerExifParams(true)
+                .showImageForEmptyUri(R.drawable.defaultpicture)
                 .build();
 
         //Create a config with those options.

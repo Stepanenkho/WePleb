@@ -8,13 +8,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.activities.ChatActivity;
+import com.epitech.wepleb.activities.ProfileActivity;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.epitech.wepleb.helpers.DividerItemDecoration;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -26,7 +33,7 @@ public class ContactsFragment extends BaseFragment {
     private ProgressBar mProgressBar;
     private RecyclerView mContactsList;
     private ParseRecyclerQueryAdapter<ParseObject> mContactsAdapter;
-
+    private ParseUser mUser;
 
     public static ContactsFragment newInstance() {
         return new ContactsFragment();
@@ -39,10 +46,12 @@ public class ContactsFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mProgressBar = (ProgressBar) view.findViewById(R.id.fragment_progress_bar);
         mContactsList = (RecyclerView) view.findViewById(R.id.fragment_contacts_list);
+        mContactsList.addItemDecoration(new DividerItemDecoration(ContactsFragment.this.getContext(), 1));
+
         mContactsAdapter = new ParseRecyclerQueryAdapter<ParseObject>(getContext(), new ParseRecyclerQueryAdapter.QueryFactory() {
             @Override
             public ParseQuery create() {
@@ -55,10 +64,12 @@ public class ContactsFragment extends BaseFragment {
 
             class ContactViewHolder extends RecyclerView.ViewHolder {
                 TextView username;
+                ImageView profile;
 
                 ContactViewHolder(View itemView) {
                     super(itemView);
                     username = (TextView) itemView.findViewById(R.id.item_contact_username);
+                    profile = (ImageView) itemView.findViewById(R.id.item_contact_profile_picture);
                 }
             }
 
@@ -71,7 +82,7 @@ public class ContactsFragment extends BaseFragment {
                     public void onClick(View v) {
                         ParseObject contact = getItem(viewHolder.getAdapterPosition());
                         ParseObject user = contact.getParseUser("user2");
-                        Toast.makeText(ContactsFragment.this.getContext(), "Hello", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ContactsFragment.this.getContext(), "Start chat activity with " + user.getString("username"), Toast.LENGTH_SHORT).show();
                         startChatActivity(user);
                     }
                 });
@@ -79,11 +90,47 @@ public class ContactsFragment extends BaseFragment {
             }
 
             @Override
-            public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
                 final ContactViewHolder viewHolder = (ContactViewHolder) holder;
                 final ParseObject contact = getItem(position);
                 final ParseObject user = contact.getParseUser("user2");
+                final ParseUser contactUser = (ParseUser) ParseObject.createWithoutData("_User", user.getObjectId());
+                contactUser.fetchInBackground(new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject object, ParseException e) {
+                        if (e != null)
+                            e.printStackTrace();
+                        else {
+                            mUser = (ParseUser) object;
+                            ParseFile picture = mUser.getParseFile("avatar");
+                            String url = picture == null ? null : picture.getUrl();
+                            ImageLoader imageLoader = ImageLoader.getInstance();
+                            imageLoader.displayImage(url, viewHolder.profile);
+                        }
+                    }
+                });
                 viewHolder.username.setText(user.getString("username"));
+                viewHolder.profile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(ContactsFragment.this.getContext(), "go to " + viewHolder.username.getText() + "'s profile", Toast.LENGTH_SHORT).show();
+                        contactUser.fetchInBackground(new GetCallback<ParseObject>() {
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
+                                if (e != null)
+                                    e.printStackTrace();
+                                else {
+                                    mUser = (ParseUser) object;
+                                    Intent profileIntent = new Intent(ContactsFragment.this.getContext(), ProfileActivity.class);
+                                    profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                    profileIntent.putExtra(ChatActivity.EXTRA_PROFILE_ID, mUser.getObjectId());
+                                    startActivity(profileIntent);
+                                }
+                            }
+                        });
+
+                    }
+                });
             }
         };
         mContactsAdapter.addOnQueryLoadListener(new ParseRecyclerQueryAdapter.OnQueryLoadListener<ParseObject>() {
