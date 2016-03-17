@@ -1,6 +1,7 @@
 package com.epitech.wepleb.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,12 +30,13 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private static final String MESSAGES_FRAGMENT_TAG = "MESSAGES_FRAGMENT_TAG";
     private static final String CONTACTS_FRAGMENT_TAG = "CONTACTS_FRAGMENT_TAG";
     private static final String PROFILE_FRAGMENT_TAG = "PROFILE_FRAGMENT_TAG";
 
+    private Context mContext;
 
     //private TextView mUsernameText;
     private Toolbar toolbar;
@@ -50,6 +52,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mContext = getApplicationContext();
         toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
         mContentView = findViewById(R.id.activity_main_container);
@@ -84,72 +87,74 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_add:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                LayoutInflater inflater = getLayoutInflater();
-                View view = inflater.inflate(R.layout.dialog_profile_username, null);
-                TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
-                title.setText("Ajouter un contact");
-                final EditText mUsernameText = (EditText) view.findViewById(R.id.dialog_profile_username);
-                builder.setView(view)
-                        .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ParseQuery<ParseUser> userQuery = new ParseQuery<ParseUser>("_User");
-                                String mUsername = mUsernameText.getText().toString();
-                                userQuery.whereEqualTo("username", mUsername);
+                if (mContext != null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    LayoutInflater inflater = getLayoutInflater();
+                    View view = inflater.inflate(R.layout.dialog_profile_username, null);
+                    TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
+                    title.setText("Ajouter un contact");
+                    final EditText mUsernameText = (EditText) view.findViewById(R.id.dialog_profile_username);
+                    builder.setView(view)
+                            .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ParseQuery<ParseUser> userQuery = new ParseQuery<ParseUser>("_User");
+                                    String mUsername = mUsernameText.getText().toString();
+                                    userQuery.whereEqualTo("username", mUsername);
 
-                                userQuery.findInBackground(new FindCallback<ParseUser>() {
-                                    @Override
-                                    public void done(List<ParseUser> objects, ParseException e) {
-                                        if (e != null) {
-                                            Toast.makeText(getApplicationContext(), "Pas de pleb trouvé", Toast.LENGTH_SHORT).show();
-                                        } else if (objects != null && objects.size() > 0) {
-                                            final ParseUser user = objects.get(0);
-                                            // Check if contact already exist
-                                            ParseQuery<ParseUser> tmpQuery = new ParseQuery<ParseUser>("Contacts");
-                                            tmpQuery.whereEqualTo("user2", user);
-                                            tmpQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
-                                            tmpQuery.findInBackground(new FindCallback<ParseUser>() {
-                                                @Override
-                                                public void done(List<ParseUser> objects, ParseException e) {
-                                                    if (e != null)
-                                                        e.printStackTrace();
-                                                    else {
-                                                        if (objects.size() != 0)
-                                                            Toast.makeText(getApplicationContext(), "Le pleb est déjà dans votre liste de contacts", Toast.LENGTH_SHORT).show();
+                                    userQuery.findInBackground(new FindCallback<ParseUser>() {
+                                        @Override
+                                        public void done(List<ParseUser> objects, ParseException e) {
+                                            if (e != null) {
+                                                Toast.makeText(mContext, "Pas de pleb trouvé", Toast.LENGTH_SHORT).show();
+                                            } else if (objects != null && objects.size() > 0) {
+                                                final ParseUser user = objects.get(0);
+                                                // Check if contact already exist
+                                                ParseQuery<ParseUser> tmpQuery = new ParseQuery<ParseUser>("Contacts");
+                                                tmpQuery.whereEqualTo("user2", user);
+                                                tmpQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
+                                                tmpQuery.findInBackground(new FindCallback<ParseUser>() {
+                                                    @Override
+                                                    public void done(List<ParseUser> objects, ParseException e) {
+                                                        if (e != null)
+                                                            e.printStackTrace();
                                                         else {
-                                                            // Contact does not exist yet
-                                                            ParseObject newContact = ParseObject.create("Contacts");
-                                                            newContact.put("user1", ParseUser.getCurrentUser());
-                                                            newContact.put("user2", user);
-                                                            newContact.saveInBackground(new SaveCallback() {
-                                                                @Override
-                                                                public void done(ParseException e) {
-                                                                    if (e != null)
-                                                                        e.printStackTrace();
-                                                                    else
-                                                                        Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
-                                                                                .setActionTextColor(Color.RED)
-                                                                                .show();
-                                                                }
-                                                            });
+                                                            if (objects.size() != 0)
+                                                                Toast.makeText(mContext, "Le pleb est déjà dans votre liste de contacts", Toast.LENGTH_SHORT).show();
+                                                            else {
+                                                                // Contact does not exist yet
+                                                                ParseObject newContact = ParseObject.create("Contacts");
+                                                                newContact.put("user1", ParseUser.getCurrentUser());
+                                                                newContact.put("user2", user);
+                                                                newContact.saveInBackground(new SaveCallback() {
+                                                                    @Override
+                                                                    public void done(ParseException e) {
+                                                                        if (e != null)
+                                                                            e.printStackTrace();
+                                                                        else
+                                                                            Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
+                                                                                    .setActionTextColor(Color.RED)
+                                                                                    .show();
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
-                                                }
-                                            });
+                                                });
+                                            }
                                         }
-                                    }
-                                });
-                            }
-                        })
-                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        })
-                        .create()
-                        .show();
+                                    });
+                                }
+                            })
+                            .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
                 break;
             default:
                 break;
@@ -220,4 +225,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         */
     }
+
 }
