@@ -4,16 +4,16 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/fragment_profile_picture"
+        android:id="@+id/activity_profile_picture"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:background="#ffffff" />
+        android:background="#ffffff"/>
 
     <TextView
-        android:id="@+id/fragment_profile_username"
+        android:id="@+id/activity_profile_username"
         android:layout_width="200dp"
         android:layout_height="50dp"
         style="@style/Base.TextAppearance.AppCompat.Large"
@@ -21,19 +21,10 @@
         android:text="heyoo?"
         android:layout_gravity="center_horizontal" />
 
-    <TextView
-        android:id="@+id/fragment_profile_password"
+    <Button
+        android:id="@+id/activity_profile_messages"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        style="@style/Widget.AppCompat.Button"
-        android:text="Changer de mot de passe"
-        />
-
-    <TextView
-        android:id="@+id/fragment_profile_disconnect"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        style="@style/Widget.AppCompat.Button"
-        android:text="Se déconnecter" />
+        android:layout_height="wrap_content"
+        android:text="Messages"/>
 
 </LinearLayout>

@@ -39,7 +39,9 @@ public class ProfileFragment extends BaseFragment {
     private ParseUser mUser;
     private TextView mUsernameText;
     private TextView mDisconnect;
+    private TextView mPassword;
     private ImageView mPictureImage;
+    private ImageLoader imageLoader;
 
 
     public static ProfileFragment newInstance() {
@@ -58,6 +60,7 @@ public class ProfileFragment extends BaseFragment {
 
         mUsernameText = (TextView) view.findViewById(R.id.fragment_profile_username);
         mDisconnect = (TextView) view.findViewById(R.id.fragment_profile_disconnect);
+        mPassword = (TextView) view.findViewById(R.id.fragment_profile_password);
 
         mUser = ParseUser.getCurrentUser();
         mUsernameText.setText(mUser.getUsername());
@@ -65,7 +68,7 @@ public class ProfileFragment extends BaseFragment {
         mPictureImage = (ImageView) view.findViewById(R.id.fragment_profile_picture);
         ParseFile picture = mUser.getParseFile("avatar");
         if (picture != null) {
-            ImageLoader imageLoader = ImageLoader.getInstance();
+            imageLoader = ImageLoader.getInstance();
             imageLoader.displayImage(picture.getUrl(), mPictureImage);
         }
 
@@ -94,11 +97,48 @@ public class ProfileFragment extends BaseFragment {
             }
         });
 
+        mPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View view = inflater.inflate(R.layout.dialog_profile_password, null);
+                builder.setView(view)
+                        .setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText input = (EditText) view.findViewById(R.id.dialog_profile_password);
+                                mUser.setPassword(input.getText().toString().trim());
+                                mUser.saveInBackground(new SaveCallback() {
+                                    public void done(com.parse.ParseException e) {
+                                        if (e == null) {
+                                            if (ProfileFragment.this.getContext() != null)
+                                                Toast.makeText(ProfileFragment.this.getContext(), "Succès !", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            if (ProfileFragment.this.getContext() != null)
+                                                Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+
         mDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ParseUser.logOut();
-                Toast.makeText(ProfileFragment.this.getContext(), "Déconnecté !", Toast.LENGTH_SHORT).show();
+                if (ProfileFragment.this.getContext() != null)
+                    Toast.makeText(ProfileFragment.this.getContext(), "Déconnecté !", Toast.LENGTH_SHORT).show();
                 startWelcomeActivity();
                 getActivity().finishAffinity();
             }
@@ -116,14 +156,16 @@ public class ProfileFragment extends BaseFragment {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText input = (EditText) view.findViewById(R.id.dialog_profile_username);
-                                Toast.makeText(ProfileFragment.this.getContext(), input.getText().toString(), Toast.LENGTH_SHORT).show();
+                                if (ProfileFragment.this.getContext() != null)
+                                    Toast.makeText(ProfileFragment.this.getContext(), input.getText().toString(), Toast.LENGTH_SHORT).show();
                                 mUser.setUsername(input.getText().toString().trim());
                                 mUser.saveInBackground(new SaveCallback() {
                                     public void done(com.parse.ParseException e) {
                                         if (e == null) {
                                             mUsernameText.setText(mUser.getUsername());
                                         } else {
-                                            Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue.", Toast.LENGTH_SHORT).show();
+                                            if (ProfileFragment.this.getContext() != null)
+                                                Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue.", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 });
@@ -147,7 +189,8 @@ public class ProfileFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GALLERY_PICTURE_REQUEST_CODE) {
                 if (data == null) {
-                    Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    if (ProfileFragment.this.getContext() != null)
+                        Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 mPictureImage.setImageURI(data.getData());
@@ -176,9 +219,6 @@ public class ProfileFragment extends BaseFragment {
                                         e.printStackTrace();
                                         Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                                     }
-
-                                    getActivity().setResult(Activity.RESULT_OK);
-                                    getActivity().finishAffinity();
                                 }
                             });
                         }
@@ -203,7 +243,8 @@ public class ProfileFragment extends BaseFragment {
                     public void done(ParseException e) {
                         if (e != null) {
                             e.printStackTrace();
-                            Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                            if (ProfileFragment.this.getContext() != null)
+                                Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -214,11 +255,9 @@ public class ProfileFragment extends BaseFragment {
                             public void done(ParseException e) {
                                 if (e != null) {
                                     e.printStackTrace();
-                                    Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                                    if (ProfileFragment.this.getContext() != null)
+                                        Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                                 }
-
-                                getActivity().setResult(Activity.RESULT_OK);
-                                getActivity().finishAffinity();
                             }
                         });
                     }
