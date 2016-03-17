@@ -46,6 +46,5 @@ public class WelcomeActivity extends BaseActivity implements View.OnClickListene
         final Intent signupIntent = new Intent(this, SignupActivity.class);
         signupIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(signupIntent);
-
     }
 }
