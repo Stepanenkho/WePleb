@@ -46,12 +46,10 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     mUser = (ParseUser) object;
                     mUsername.setText(mUser.getUsername());
                     ParseFile picture = mUser.getParseFile("avatar");
-                    if (picture != null) {
-                        ImageLoader imageLoader = ImageLoader.getInstance();
-                        imageLoader.displayImage(picture.getUrl(), mPicture);
-                    }
+                    String url = picture == null ? null : picture.getUrl();
+                    ImageLoader imageLoader = ImageLoader.getInstance();
+                    imageLoader.displayImage(url, mPicture);
                 }
-
             }
         });
     }
