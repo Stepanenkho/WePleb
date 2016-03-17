@@ -105,7 +105,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                                         } else if (objects != null && objects.size() > 0){
                                             ParseUser user = objects.get(0);
-                                            mUsernameText.setText("Found " + user.getUsername());
+                                            mUsernameText.setText("Contact trouvé");
                                             ParseObject newContact = ParseObject.create("Contacts");
                                             newContact.put("user1", mUser);
                                             newContact.put("user2", user);
