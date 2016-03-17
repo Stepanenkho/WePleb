@@ -102,23 +102,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                     @Override
                                     public void done(List<ParseUser> objects, ParseException e) {
                                         if (e != null) {
-
-                                        } else if (objects != null && objects.size() > 0){
-                                            ParseUser user = objects.get(0);
-                                            mUsernameText.setText("Contact trouvé");
-                                            ParseObject newContact = ParseObject.create("Contacts");
-                                            newContact.put("user1", mUser);
-                                            newContact.put("user2", user);
-                                            newContact.saveInBackground(new SaveCallback() {
+                                            Toast.makeText(getApplicationContext(), "Pas de pleb trouvé", Toast.LENGTH_SHORT).show();
+                                        } else if (objects != null && objects.size() > 0) {
+                                            final ParseUser user = objects.get(0);
+                                            // Check if contact already exist
+                                            ParseQuery<ParseUser> tmpQuery = new ParseQuery<ParseUser>("Contacts");
+                                            tmpQuery.whereEqualTo("user2", user);
+                                            tmpQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
+                                            tmpQuery.findInBackground(new FindCallback<ParseUser>() {
                                                 @Override
-                                                public void done(ParseException e) {
+                                                public void done(List<ParseUser> objects, ParseException e) {
                                                     if (e != null)
                                                         e.printStackTrace();
-                                                    else
-                                                        Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
-                                                            .setActionTextColor(Color.RED)
-                                                            .show();
-
+                                                    else {
+                                                        if (objects.size() != 0)
+                                                            Toast.makeText(getApplicationContext(), "Le pleb est déjà dans votre liste de contacts", Toast.LENGTH_SHORT).show();
+                                                        else {
+                                                            // Contact does not exist yet
+                                                            ParseObject newContact = ParseObject.create("Contacts");
+                                                            newContact.put("user1", ParseUser.getCurrentUser());
+                                                            newContact.put("user2", user);
+                                                            newContact.saveInBackground(new SaveCallback() {
+                                                                @Override
+                                                                public void done(ParseException e) {
+                                                                    if (e != null)
+                                                                        e.printStackTrace();
+                                                                    else
+                                                                        Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
+                                                                                .setActionTextColor(Color.RED)
+                                                                                .show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
                                                 }
                                             });
                                         }
@@ -142,7 +158,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -162,7 +177,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void placeFragment(final String fragmentTag) {
-        BaseFragment fragment = (BaseFragment)getSupportFragmentManager().findFragmentByTag(fragmentTag);
+        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(fragmentTag);
         if (fragment == null) {
             switch (fragmentTag) {
                 case MESSAGES_FRAGMENT_TAG:

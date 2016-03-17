@@ -151,41 +151,61 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             case R.id.add_button:
                 if (mUsername == "")
                     Toast.makeText(this, "Le champ de recherche ne doit être vide", Toast.LENGTH_SHORT).show();
+                else if (mUsername.equals(ParseUser.getCurrentUser().getUsername()))
+                    Toast.makeText(this, "Vous ne pouvez vous ajouter vous-même", Toast.LENGTH_SHORT).show();
                 else {
-                    ParseQuery<ParseUser> userQuery = new ParseQuery<>("_User");
+                    final ParseQuery<ParseUser> userQuery = new ParseQuery<>("_User");
                     userQuery.whereEqualTo("username", mUsername);
-
                     userQuery.findInBackground(new FindCallback<ParseUser>() {
                         @Override
                         public void done(List<ParseUser> objects, ParseException e) {
                             if (e != null) {
-
+                                Toast.makeText(getApplicationContext(), "Pas de pleb trouvé", Toast.LENGTH_SHORT).show();
                             } else if (objects != null && objects.size() > 0) {
-                                ParseUser user = objects.get(0);
-                                ParseObject newContact = ParseObject.create("Contacts");
-                                newContact.put("user1", ParseUser.getCurrentUser());
-                                newContact.put("user2", user);
-                                newContact.saveInBackground(new SaveCallback() {
+                                final ParseUser user = objects.get(0);
+                                // Check if contact already exist
+                                ParseQuery<ParseUser> tmpQuery = new ParseQuery<ParseUser>("Contacts");
+                                tmpQuery.whereEqualTo("user2", user);
+                                tmpQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
+                                tmpQuery.findInBackground(new FindCallback<ParseUser>() {
                                     @Override
-                                    public void done(ParseException e) {
+                                    public void done(List<ParseUser> objects, ParseException e) {
                                         if (e != null)
                                             e.printStackTrace();
-                                        else
-                                            Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
-                                                    .setActionTextColor(Color.RED)
-                                                    .show();
-                                        mContactsAdapter.setQueryFactory(new ParseRecyclerQueryAdapter.QueryFactory() {
-                                            @Override
-                                            public ParseQuery create() {
-                                                final ParseQuery<ParseObject> contactsQuery = new ParseQuery<>("Contacts");
-                                                final ParseQuery<ParseObject> usersQuery = new ParseQuery<>("_User");
-                                                usersQuery.whereStartsWith("username", mUsername);
-                                                contactsQuery.whereMatchesQuery("user2", usersQuery);
-                                                contactsQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
-                                                return contactsQuery;
+                                        else {
+                                            if (objects.size() != 0)
+                                                Toast.makeText(getApplicationContext(), "Le pleb est déjà dans votre liste de contacts", Toast.LENGTH_SHORT).show();
+                                            else {
+                                                // Contact does not exist yet
+                                                ParseObject newContact = ParseObject.create("Contacts");
+                                                newContact.put("user1", ParseUser.getCurrentUser());
+                                                newContact.put("user2", user);
+                                                newContact.saveInBackground(new SaveCallback() {
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        if (e != null)
+                                                            e.printStackTrace();
+                                                        else
+                                                            Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
+                                                                    .setActionTextColor(Color.RED)
+                                                                    .show();
+                                                        mContactsAdapter.setQueryFactory(new ParseRecyclerQueryAdapter.QueryFactory() {
+                                                            @Override
+                                                            public ParseQuery create() {
+                                                                final ParseQuery<ParseObject> contactsQuery = new ParseQuery<>("Contacts");
+                                                                final ParseQuery<ParseObject> usersQuery = new ParseQuery<>("_User");
+                                                                usersQuery.whereStartsWith("username", mUsername);
+                                                                contactsQuery.whereMatchesQuery("user2", usersQuery);
+                                                                contactsQuery.whereEqualTo("user1", ParseUser.getCurrentUser());
+                                                                return contactsQuery;
+                                                            }
+                                                        });
+                                                        mContactsAdapter.reload();
+                                                    }
+                                                });
                                             }
-                                        });
-                                        mContactsAdapter.reload();
+                                        }
+
                                     }
                                 });
                             }
