@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.fragments.BaseFragment;
 import com.epitech.wepleb.fragments.ContactsFragment;
+import com.epitech.wepleb.fragments.ProfileFragment;
 import com.parse.ParseUser;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -110,8 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
-                    //fragment = ProfileFragment.newInstance();
-                    Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
+                    fragment = ProfileFragment.newInstance();
                     break;
                 default:
                     break;
