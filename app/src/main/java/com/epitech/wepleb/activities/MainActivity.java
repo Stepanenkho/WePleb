@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,9 +46,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     //private TextView mUsernameText;
     private Toolbar toolbar;
     private View mContentView;
-    private View mMessagesButton;
-    private View mContactsButton;
-    private View mProfileButton;
+    private RadioButton mMessagesButton;
+    private RadioButton mContactsButton;
+    private RadioButton mProfileButton;
 
     private ParseUser mUser;
 
@@ -59,9 +61,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
         mContentView = findViewById(R.id.activity_main_container);
-        mMessagesButton = findViewById(R.id.activity_main_tab_messages);
-        mContactsButton = findViewById(R.id.activity_main_tab_contacts);
-        mProfileButton = findViewById(R.id.activity_main_tab_profile);
+        mMessagesButton = (RadioButton) findViewById(R.id.activity_main_tab_messages);
+        mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
+        mContactsButton = (RadioButton) findViewById(R.id.activity_main_tab_contacts);
+        mProfileButton = (RadioButton) findViewById(R.id.activity_main_tab_profile);
 
         mUser = ParseUser.getCurrentUser();
         mMessagesButton.setOnClickListener(this);
@@ -198,14 +201,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 case MESSAGES_FRAGMENT_TAG:
                     //fragment = MessagesFragment.newInstance();
                     toolbar.setTitle("Messages");
+                    mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
+                    mContactsButton.setText("Contacts");
+                    mProfileButton.setText("Profil");
                     Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
                     break;
                 case CONTACTS_FRAGMENT_TAG:
                     toolbar.setTitle("Contacts");
+                    mMessagesButton.setText("Messages");
+                    mContactsButton.setText(Html.fromHtml("<u>Contacts</u>"));
+                    mProfileButton.setText("Profil");
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
                     toolbar.setTitle("Profil");
+                    mMessagesButton.setText("Messages");
+                    mContactsButton.setText("Contacts");
+                    mProfileButton.setText(Html.fromHtml("<u>Profil</u>"));
                     fragment = ProfileFragment.newInstance();
                     break;
                 default:
