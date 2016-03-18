@@ -63,6 +63,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                     Snackbar.make(findViewById(android.R.id.content), "Utilisateur non reconnu.", Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.RED)
                             .show();
+                    finish();
                     e.printStackTrace();
                 }
                 else {
