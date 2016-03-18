@@ -82,7 +82,6 @@ public class ContactsFragment extends BaseFragment {
                     public void onClick(View v) {
                         ParseObject contact = getItem(viewHolder.getAdapterPosition());
                         ParseObject user = contact.getParseUser("user2");
-                        Toast.makeText(ContactsFragment.this.getContext(), "Start chat activity with " + user.getString("username"), Toast.LENGTH_SHORT).show();
                         startChatActivity(user);
                     }
                 });
@@ -113,7 +112,6 @@ public class ContactsFragment extends BaseFragment {
                 viewHolder.profile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(ContactsFragment.this.getContext(), "go to " + viewHolder.username.getText() + "'s profile", Toast.LENGTH_SHORT).show();
                         contactUser.fetchInBackground(new GetCallback<ParseObject>() {
                             @Override
                             public void done(ParseObject object, ParseException e) {

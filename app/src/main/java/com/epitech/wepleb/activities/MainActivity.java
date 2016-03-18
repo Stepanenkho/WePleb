@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.fragments.BaseFragment;
 import com.epitech.wepleb.fragments.ContactsFragment;
+import com.epitech.wepleb.fragments.MessagesFragment;
 import com.epitech.wepleb.fragments.ProfileFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -43,14 +44,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Context mContext;
 
-    //private TextView mUsernameText;
     private Toolbar toolbar;
     private View mContentView;
     private RadioButton mMessagesButton;
     private RadioButton mContactsButton;
     private RadioButton mProfileButton;
 
-    private ParseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +64,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mContactsButton = (RadioButton) findViewById(R.id.activity_main_tab_contacts);
         mProfileButton = (RadioButton) findViewById(R.id.activity_main_tab_profile);
 
-        mUser = ParseUser.getCurrentUser();
         mMessagesButton.setOnClickListener(this);
         mContactsButton.setOnClickListener(this);
         mProfileButton.setOnClickListener(this);
+
+        placeFragment(MESSAGES_FRAGMENT_TAG);
     }
 
     /*
@@ -179,20 +179,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.activity_main_tab_messages:
-                // TODO Set title
                 toolbar.setTitle("Messages");
                 placeFragment(MESSAGES_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_contacts:
-                // TODO Set title
                 toolbar.setTitle("Contacts");
-
                 placeFragment(CONTACTS_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_profile:
-                // TODO Set title
                 toolbar.setTitle("Profil");
-
                 placeFragment(PROFILE_FRAGMENT_TAG);
                 break;
         }
@@ -203,8 +198,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (fragment == null) {
             switch (fragmentTag) {
                 case MESSAGES_FRAGMENT_TAG:
-                    //fragment = MessagesFragment.newInstance();
-                    Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
+                    fragment = MessagesFragment.newInstance();
                     break;
                 case CONTACTS_FRAGMENT_TAG:
                     fragment = ContactsFragment.newInstance();
@@ -241,25 +235,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             // This is important, otherwise the result will not be passed to the fragment
             super.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    public void fetchContacts() {
-        /*
-        ParseQuery<ParseUser> parseQuery = new ParseQuery<>("_User");
-        parseQuery.whereEqualTo("username", mUser.getUsername());
-
-        parseQuery.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> objects, ParseException e) {
-                if (e != null) {
-
-                } else if (objects != null && objects.size() > 0){
-                    ParseUser user = objects.get(0);
-                    mUsernameText.setText("Found " + user.getUsername());
-                }
-            }
-        });
-        */
     }
 
 }
