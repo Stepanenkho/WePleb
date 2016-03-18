@@ -226,7 +226,8 @@ public class ProfileFragment extends BaseFragment {
                         public void done(ParseException e) {
                             if (e != null) {
                                 e.printStackTrace();
-                                Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                                if (ProfileFragment.this.getContext() != null)
+                                    Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -237,7 +238,8 @@ public class ProfileFragment extends BaseFragment {
                                 public void done(ParseException e) {
                                     if (e != null) {
                                         e.printStackTrace();
-                                        Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                                        if (ProfileFragment.this.getContext() != null)
+                                            Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -245,10 +247,12 @@ public class ProfileFragment extends BaseFragment {
                     });
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
-                    Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    if (ProfileFragment.this.getContext() != null)
+                        Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    if (ProfileFragment.this.getContext() != null)
+                        Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue", Toast.LENGTH_SHORT).show();
                 }
             } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 Bundle extras = data.getExtras();
@@ -287,12 +291,14 @@ public class ProfileFragment extends BaseFragment {
     }
 
     private void startWelcomeActivity() {
-        final Intent welcomeIntent = new Intent(getContext(), WelcomeActivity.class);
-        welcomeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(welcomeIntent);
+        if (getContext() != null) {
+            final Intent welcomeIntent = new Intent(getContext(), WelcomeActivity.class);
+            welcomeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(welcomeIntent);
+        }
     }
 
-    public static Bitmap encodeToQrCode(String text, int width, int height){
+    public static Bitmap encodeToQrCode(String text, int width, int height) {
         QRCodeWriter writer = new QRCodeWriter();
         BitMatrix matrix = null;
         try {
@@ -301,9 +307,9 @@ public class ProfileFragment extends BaseFragment {
             ex.printStackTrace();
         }
         Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        for (int x = 0; x < width; x++){
-            for (int y = 0; y < height; y++){
-                bmp.setPixel(x, y, matrix.get(x,y) ? Color.BLACK : Color.WHITE);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bmp.setPixel(x, y, matrix.get(x, y) ? Color.BLACK : Color.WHITE);
             }
         }
         return bmp;
