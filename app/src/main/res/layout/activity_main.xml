@@ -63,7 +63,7 @@
             android:button="@null"
             android:gravity="center"
             android:padding="12dp"
-            android:text="Profile"
+            android:text="Profil"
             android:textColor="@color/white" />
 
     </RadioGroup>
