@@ -4,9 +4,10 @@
 
     <item
         android:id="@+id/action_qrcode_add"
-        android:icon="@drawable/icon_camera_black"
+        android:icon="@drawable/icon_camera"
         android:title="search"
-        app:showAsAction="always" />
+        app:showAsAction="always"
+        />
 
     <item
         android:id="@+id/action_search"
