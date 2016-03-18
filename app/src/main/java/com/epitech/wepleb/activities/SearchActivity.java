@@ -160,8 +160,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                                 ImageLoader imageLoader = ImageLoader.getInstance();
                                 imageLoader.displayImage(url, viewHolder.profile);
                                 try {
-                                    mUsername = mUser.fetchIfNeeded().getUsername();
-                                    viewHolder.username.setText(mUsername);
+                                    viewHolder.username.setText(mUser.fetchIfNeeded().getUsername());
                                 } catch (ParseException e2) {
                                     e2.printStackTrace();
                                 }
@@ -197,22 +196,22 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.add_button:
                 if (mContext != null) {
-                    if (mUsername == "")
+                    if (mUsername.matches(""))
                         Toast.makeText(this, "Le champ de recherche ne doit être vide", Toast.LENGTH_SHORT).show();
                     else if (mUsername.equals(ParseUser.getCurrentUser().getUsername()))
                         Toast.makeText(this, "Vous ne pouvez vous rechercher vous-même", Toast.LENGTH_SHORT).show();
                     else {
                         final ParseQuery<ParseUser> userQuery = new ParseQuery<>("_User");
-                        userQuery.whereMatches("username", mUsername);
+                        userQuery.whereEqualTo("username", mUsername);
                         userQuery.findInBackground(new FindCallback<ParseUser>() {
                             @Override
                             public void done(List<ParseUser> plebs, ParseException e) {
-                                if (e != null) {
+                                if (e != null)
+                                    e.printStackTrace();
+                                else if (plebs != null && plebs.size() == 0)
                                     Toast.makeText(mContext, "Pas de pleb trouvé", Toast.LENGTH_SHORT).show();
-                                } else if (plebs != null && plebs.size() > 0) {
-                                    final ParseUser user = plebs.get(0);
-                                    // Check if contact already exist
-                                    startProfileActivity(user);
+                                else if (plebs != null && plebs.size() > 0) {
+                                    startProfileActivity(plebs.get(0));
                                 }
                             }
                         });
