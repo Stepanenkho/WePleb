@@ -67,11 +67,13 @@ public class ContactsFragment extends BaseFragment {
             class ContactViewHolder extends RecyclerView.ViewHolder {
                 TextView username;
                 ImageView profile;
+                TextView mood;
 
                 ContactViewHolder(View itemView) {
                     super(itemView);
                     username = (TextView) itemView.findViewById(R.id.item_contact_username);
                     profile = (ImageView) itemView.findViewById(R.id.item_contact_profile_picture);
+                    mood = (TextView) itemView.findViewById(R.id.item_contact_mood);
                 }
             }
 
@@ -111,6 +113,7 @@ public class ContactsFragment extends BaseFragment {
                     }
                 });
                 viewHolder.username.setText(user.getString("username"));
+                viewHolder.mood.setText(user.getString("mood"));
                 viewHolder.profile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
