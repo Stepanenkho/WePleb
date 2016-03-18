@@ -35,7 +35,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String MESSAGES_FRAGMENT_TAG = "MESSAGES_FRAGMENT_TAG";
     private static final String CONTACTS_FRAGMENT_TAG = "CONTACTS_FRAGMENT_TAG";
@@ -62,7 +62,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setSupportActionBar(toolbar);
         mContentView = findViewById(R.id.activity_main_container);
         mMessagesButton = (RadioButton) findViewById(R.id.activity_main_tab_messages);
-        mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
         mContactsButton = (RadioButton) findViewById(R.id.activity_main_tab_contacts);
         mProfileButton = (RadioButton) findViewById(R.id.activity_main_tab_profile);
 
@@ -181,14 +180,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.activity_main_tab_messages:
                 // TODO Set title
+                toolbar.setTitle("Messages");
                 placeFragment(MESSAGES_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_contacts:
                 // TODO Set title
+                toolbar.setTitle("Contacts");
+
                 placeFragment(CONTACTS_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_profile:
                 // TODO Set title
+                toolbar.setTitle("Profil");
+
                 placeFragment(PROFILE_FRAGMENT_TAG);
                 break;
         }
@@ -200,24 +204,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             switch (fragmentTag) {
                 case MESSAGES_FRAGMENT_TAG:
                     //fragment = MessagesFragment.newInstance();
-                    toolbar.setTitle("Messages");
-                    mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
-                    mContactsButton.setText("Contacts");
-                    mProfileButton.setText("Profil");
                     Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
                     break;
                 case CONTACTS_FRAGMENT_TAG:
-                    toolbar.setTitle("Contacts");
-                    mMessagesButton.setText("Messages");
-                    mContactsButton.setText(Html.fromHtml("<u>Contacts</u>"));
-                    mProfileButton.setText("Profil");
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
-                    toolbar.setTitle("Profil");
-                    mMessagesButton.setText("Messages");
-                    mContactsButton.setText("Contacts");
-                    mProfileButton.setText(Html.fromHtml("<u>Profil</u>"));
                     fragment = ProfileFragment.newInstance();
                     break;
                 default:
@@ -235,8 +227,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
+        if (result != null) {
+            if (result.getContents() == null) {
                 Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
