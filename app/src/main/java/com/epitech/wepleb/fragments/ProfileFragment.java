@@ -71,8 +71,20 @@ public class ProfileFragment extends BaseFragment {
 
         mUser = ParseUser.getCurrentUser();
         mUsernameText.setText(mUser.getUsername());
-        mQrCode.setImageBitmap(encodeToQrCode(mUser.getObjectId(), 100, 100));
 
+        mQrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                final View vqrcode = inflater.inflate(R.layout.dialog_profile_qrcode, null);
+                builder.setView(vqrcode);
+                ImageView imageView = (ImageView) vqrcode.findViewById(R.id.dialog_profile_image_qrcode);
+                imageView.setImageBitmap(encodeToQrCode(mUser.getObjectId(), 100, 100));
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
         mPictureImage = (ImageView) view.findViewById(R.id.fragment_profile_picture);
         ParseFile picture = mUser.getParseFile("avatar");
         if (picture != null) {
