@@ -87,10 +87,9 @@ public class ProfileFragment extends BaseFragment {
         });
         mPictureImage = (ImageView) view.findViewById(R.id.fragment_profile_picture);
         ParseFile picture = mUser.getParseFile("avatar");
-        if (picture != null) {
-            imageLoader = ImageLoader.getInstance();
-            imageLoader.displayImage(picture.getUrl(), mPictureImage);
-        }
+        String url = picture == null ? null : picture.getUrl();
+        imageLoader = ImageLoader.getInstance();
+        imageLoader.displayImage(url, mPictureImage);
 
         mPictureImage.setOnClickListener(new View.OnClickListener() {
             @Override
