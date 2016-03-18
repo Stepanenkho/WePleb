@@ -28,6 +28,8 @@ import com.parse.ParseUser;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ContactsFragment extends BaseFragment {
 
     private FrameLayout mProgressBar;
