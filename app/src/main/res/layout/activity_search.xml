@@ -25,16 +25,15 @@
             android:layout_width="match_parent"
             android:id="@+id/search_bar"
             android:textColor="@color/white"
-            />
+            android:singleLine="true" />
         </android.support.v7.widget.Toolbar>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/add_button"
         android:textAllCaps="false"
-        android:background="@android:color/transparent"
         android:textColor="@color/colorPrimary"
-        android:text="recherche"/>
+        android:text="chercher le contact : "/>
 
     <FrameLayout
         android:id="@+id/activity_progress_bar"
