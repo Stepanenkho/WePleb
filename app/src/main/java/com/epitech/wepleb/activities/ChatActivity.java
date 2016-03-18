@@ -8,8 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,7 +23,6 @@ import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -129,6 +128,17 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
         });
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     private void loadDiscussion(String discussionId) {
         final ParseQuery<ParseObject> discussionQuery = new ParseQuery<>("Discussions");
         discussionQuery.whereEqualTo("objectId", discussionId);
@@ -226,7 +236,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                         }
                     });
 
-                    viewHolder.message.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.rounded_accent));
+                    viewHolder.message.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.rounded_grey));
                 } else {
                     viewHolder.root.setGravity(Gravity.LEFT);
                     viewHolder.pictureRight.setVisibility(View.INVISIBLE);
