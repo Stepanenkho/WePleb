@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +21,10 @@ import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.activities.WelcomeActivity;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -42,6 +47,7 @@ public class ProfileFragment extends BaseFragment {
     private TextView mPassword;
     private ImageView mPictureImage;
     private ImageLoader imageLoader;
+    private ImageView mQrCode;
 
 
     public static ProfileFragment newInstance() {
@@ -61,9 +67,11 @@ public class ProfileFragment extends BaseFragment {
         mUsernameText = (TextView) view.findViewById(R.id.fragment_profile_username);
         mDisconnect = (TextView) view.findViewById(R.id.fragment_profile_disconnect);
         mPassword = (TextView) view.findViewById(R.id.fragment_profile_password);
+        mQrCode = (ImageView) view.findViewById(R.id.fragment_profile_qrcode);
 
         mUser = ParseUser.getCurrentUser();
         mUsernameText.setText(mUser.getUsername());
+        mQrCode.setImageBitmap(encodeToQrCode(mUser.getObjectId(), 100, 100));
 
         mPictureImage = (ImageView) view.findViewById(R.id.fragment_profile_picture);
         ParseFile picture = mUser.getParseFile("avatar");
@@ -270,5 +278,22 @@ public class ProfileFragment extends BaseFragment {
         final Intent welcomeIntent = new Intent(getContext(), WelcomeActivity.class);
         welcomeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(welcomeIntent);
+    }
+
+    public static Bitmap encodeToQrCode(String text, int width, int height){
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix matrix = null;
+        try {
+            matrix = writer.encode(text, BarcodeFormat.QR_CODE, 100, 100);
+        } catch (WriterException ex) {
+            ex.printStackTrace();
+        }
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        for (int x = 0; x < width; x++){
+            for (int y = 0; y < height; y++){
+                bmp.setPixel(x, y, matrix.get(x,y) ? Color.BLACK : Color.WHITE);
+            }
+        }
+        return bmp;
     }
 }

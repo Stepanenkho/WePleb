@@ -49,6 +49,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <ImageView
+        android:id="@+id/fragment_profile_qrcode"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_red_dark"/>
+
     <TextView
         android:id="@+id/fragment_profile_disconnect"
         android:layout_width="match_parent"

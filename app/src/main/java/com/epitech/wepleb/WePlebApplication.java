@@ -7,7 +7,9 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 
+import com.epitech.wepleb.activities.MainActivity;
 import com.facebook.FacebookSdk;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;

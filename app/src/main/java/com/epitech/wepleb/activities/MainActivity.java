@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,6 +22,8 @@ import com.epitech.wepleb.R;
 import com.epitech.wepleb.fragments.BaseFragment;
 import com.epitech.wepleb.fragments.ContactsFragment;
 import com.epitech.wepleb.fragments.ProfileFragment;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -156,6 +159,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                             .show();
                 }
                 break;
+            case R.id.action_qrcode_add:
+                IntentIntegrator integrator = new IntentIntegrator(this);
+                integrator.setPrompt("Scanner pour ajouter un amis !");
+                integrator.setOrientationLocked(false);
+                integrator.setBeepEnabled(false);
+                integrator.initiateScan();
+                break;
             default:
                 break;
         }
@@ -204,6 +214,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             getSupportFragmentManager().beginTransaction()
                     .replace(mContentView.getId(), fragment, fragmentTag)
                     .commitAllowingStateLoss();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Log.d("MainActivity", "Cancelled scan");
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                profileIntent.putExtra(ChatActivity.EXTRA_PROFILE_ID, result.getContents());
+                startActivity(profileIntent);
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

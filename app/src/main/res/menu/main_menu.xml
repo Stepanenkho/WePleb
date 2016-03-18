@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_qrcode_add"
+        android:icon="@drawable/icon_camera_black"
+        android:title="search"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/icon_search"
         android:title="search"
-        app:showAsAction="always"
-    />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/icon_add_user"
         android:title="add user"
-        app:showAsAction="always"
-        />
+        app:showAsAction="always" />
 
 </menu>

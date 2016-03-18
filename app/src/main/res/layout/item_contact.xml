@@ -24,6 +24,8 @@
             android:layout_height="wrap_content"
             android:textStyle="normal"
             android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/black"
+            android:alpha="0.75"
             android:textSize="20sp"/>
         <TextView
             android:id="@+id/item_contact_mood"
@@ -32,6 +34,8 @@
             android:layout_alignStart="@+id/item_contact_username"
             android:layout_below="@+id/item_contact_username"
             android:textStyle="italic"
+            android:textColor="@android:color/black"
+            android:alpha="0.75"
             android:fontFamily="sans-serif"
             android:textSize="15sp"
             android:text="I am a Super Pleb"/>
