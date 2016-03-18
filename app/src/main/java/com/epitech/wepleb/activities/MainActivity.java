@@ -181,14 +181,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.activity_main_tab_messages:
                 // TODO Set title
-                placeFragment(MESSAGES_FRAGMENT_TAG);
+                toolbar.setTitle("Messages");
+                mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
+                mContactsButton.setText("Contacts");
+                mProfileButton.setText("Profil");                placeFragment(MESSAGES_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_contacts:
                 // TODO Set title
+                toolbar.setTitle("Contacts");
+                mMessagesButton.setText("Messages");
+                mContactsButton.setText(Html.fromHtml("<u>Contacts</u>"));
+                mProfileButton.setText("Profil");
                 placeFragment(CONTACTS_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_profile:
                 // TODO Set title
+                toolbar.setTitle("Profil");
+                mMessagesButton.setText("Messages");
+                mContactsButton.setText("Contacts");
+                mProfileButton.setText(Html.fromHtml("<u>Profil</u>"));
                 placeFragment(PROFILE_FRAGMENT_TAG);
                 break;
         }
@@ -200,24 +211,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             switch (fragmentTag) {
                 case MESSAGES_FRAGMENT_TAG:
                     //fragment = MessagesFragment.newInstance();
-                    toolbar.setTitle("Messages");
-                    mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
-                    mContactsButton.setText("Contacts");
-                    mProfileButton.setText("Profil");
                     Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
                     break;
                 case CONTACTS_FRAGMENT_TAG:
-                    toolbar.setTitle("Contacts");
-                    mMessagesButton.setText("Messages");
-                    mContactsButton.setText(Html.fromHtml("<u>Contacts</u>"));
-                    mProfileButton.setText("Profil");
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
-                    toolbar.setTitle("Profil");
-                    mMessagesButton.setText("Messages");
-                    mContactsButton.setText("Contacts");
-                    mProfileButton.setText(Html.fromHtml("<u>Profil</u>"));
                     fragment = ProfileFragment.newInstance();
                     break;
                 default:
