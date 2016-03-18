@@ -17,13 +17,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -48,6 +52,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private RecyclerView mContactsList;
     private ParseRecyclerQueryAdapter<ParseObject> mContactsAdapter;
     private String mUsername;
+    private ParseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,10 +116,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
                 class ContactViewHolder extends RecyclerView.ViewHolder {
                     TextView username;
+                    ImageView profile;
 
                     ContactViewHolder(View itemView) {
                         super(itemView);
                         username = (TextView) itemView.findViewById(R.id.item_contact_username);
+                        profile = (ImageView) itemView.findViewById(R.id.item_contact_profile_picture);
                     }
                 }
 
@@ -138,12 +145,27 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     final ContactViewHolder viewHolder = (ContactViewHolder) holder;
                     final ParseObject contact = getItem(position);
                     final ParseUser user = contact.getParseUser("user2");
-                    try {
-                        String username = user.fetchIfNeeded().getUsername();
-                        viewHolder.username.setText(username);
-                    } catch (com.parse.ParseException e) {
-                        e.printStackTrace();
-                    }
+                    final ParseUser contactUser = (ParseUser) ParseObject.createWithoutData("_User", user.getObjectId());
+                    contactUser.fetchInBackground(new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject object, ParseException e) {
+                            if (e != null)
+                                e.printStackTrace();
+                            else {
+                                mUser = (ParseUser) object;
+                                ParseFile picture = mUser.getParseFile("avatar");
+                                String url = picture == null ? null : picture.getUrl();
+                                ImageLoader imageLoader = ImageLoader.getInstance();
+                                imageLoader.displayImage(url, viewHolder.profile);
+                                try {
+                                    mUsername = mUser.fetchIfNeeded().getUsername();
+                                    viewHolder.username.setText(mUsername);
+                                } catch (ParseException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 }
             };
 
