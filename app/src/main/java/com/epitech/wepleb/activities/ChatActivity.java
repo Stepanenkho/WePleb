@@ -1,5 +1,7 @@
 package com.epitech.wepleb.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -167,7 +169,31 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
     }
 
     private void createDiscussion() {
+        //Create AES KEY
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_profile_username, null);
+        TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
+        title.setText("Passphrase");
+        final EditText mPassphrase = (EditText) view.findViewById(R.id.dialog_profile_username);
+        builder.setView(view)
+                .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // SharedPreference add Passphrase
+                    }
+                })
+                .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .create()
+                .show();
+
         final ParseObject discussion = ParseObject.create("Discussions");
+
         discussion.put("user1", ParseUser.getCurrentUser());
         discussion.put("user2", mUser);
         discussion.saveInBackground(new SaveCallback() {
