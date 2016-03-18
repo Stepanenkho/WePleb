@@ -1,5 +1,7 @@
 package com.epitech.wepleb.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -9,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.epitech.wepleb.helpers.PlebSharedPreferences;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -48,13 +53,16 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
     private ParseObject mDiscussion;
     private ParseObject mUser;
     private int messageCount = 0;
+    private PlebSharedPreferences plebSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        plebSharedPreferences = new PlebSharedPreferences(this);
         mToolbar = (Toolbar) findViewById(R.id.activity_chat_toolbar);
+        setSupportActionBar(mToolbar);
         mList = (RecyclerView) findViewById(R.id.activity_chat_list);
         mChatInput = (EditText) findViewById(R.id.activity_chat_input);
         mSend = (TextView) findViewById(R.id.activity_chat_send);
@@ -128,12 +136,46 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        MenuItem search = menu.getItem(R.id.action_search);
+        search.setVisible(false);
+        MenuItem qrCode = menu.getItem(R.id.action_qrcode_add);
+        qrCode.setVisible(false);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.action_add:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                LayoutInflater inflater = getLayoutInflater();
+                View view = inflater.inflate(R.layout.dialog_profile_username, null);
+                TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
+                title.setText("Passphrase");
+                final EditText mPassphrase = (EditText) view.findViewById(R.id.dialog_profile_username);
+                builder.setView(view)
+                        .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // SharedPreference add Passphrase
+                                plebSharedPreferences.setPassphrase(mPassphrase.getText().toString());
+                            }
+                        })
+                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .create()
+                        .show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -168,6 +210,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
     private void createDiscussion() {
         final ParseObject discussion = ParseObject.create("Discussions");
+
         discussion.put("user1", ParseUser.getCurrentUser());
         discussion.put("user2", mUser);
         discussion.saveInBackground(new SaveCallback() {
