@@ -3,8 +3,10 @@ package com.epitech.wepleb.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -63,6 +65,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         toolbar = (Toolbar) findViewById(R.id.activity_search_toolbar);
         setSupportActionBar(toolbar);
         mSearchBar = (EditText) findViewById(R.id.search_bar);
+        if (mContext != null)
+            mSearchBar.getBackground().mutate().setColorFilter(ContextCompat.getColor(mContext, R.color.white), PorterDuff.Mode.SRC_ATOP);
+
         mBackButton = (ImageButton) findViewById(R.id.search_back);
         mAddButton = (Button) findViewById(R.id.add_button);
         mProgressBar = (FrameLayout) findViewById(R.id.activity_progress_bar);
@@ -85,7 +90,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void afterTextChanged(final Editable s) {
                 mProgressBar.setVisibility(View.VISIBLE);
-                mAddButton.setText("Chercher l'id WePleb de : " + s);
+                if (s.toString().isEmpty())
+                    mAddButton.setText("recherche");
+                else
+                    mAddButton.setText("résultat(s)");
                 mUsername = s.toString();
                 mContactsAdapter.setQueryFactory(new ParseRecyclerQueryAdapter.QueryFactory() {
                     @Override

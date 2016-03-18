@@ -10,7 +10,7 @@
         android:id="@+id/activity_main_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#335449"
+        android:background="#e74c3c"
         app:title="Contacts"
         app:titleTextColor="#ffffff" />
 

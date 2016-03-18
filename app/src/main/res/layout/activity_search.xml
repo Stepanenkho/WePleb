@@ -6,7 +6,7 @@
         android:id="@+id/activity_search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#335449">
+        android:background="#e74c3c">
 
         <ImageButton
             android:layout_width="20dp"
@@ -19,11 +19,12 @@
             android:layout_marginRight="20dp"
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:background="#000000" />
+            android:background="@color/white" />
         <EditText
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:id="@+id/search_bar"
+            android:textColor="@color/white"
             />
         </android.support.v7.widget.Toolbar>
     <Button
@@ -31,7 +32,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/add_button"
         android:textAllCaps="false"
-        android:text="Chercher l'id WePleb de : "/>
+        android:background="@android:color/transparent"
+        android:textColor="@color/colorPrimary"
+        android:text="recherche"/>
 
     <FrameLayout
         android:id="@+id/activity_progress_bar"
