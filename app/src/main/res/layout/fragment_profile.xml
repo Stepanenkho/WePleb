@@ -20,11 +20,10 @@
 
         <ImageView
             android:id="@+id/fragment_profile_qrcode"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_margin="60dp"
-            android:gravity="center_horizontal"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/qrcode_user"/>
 
     </LinearLayout>
