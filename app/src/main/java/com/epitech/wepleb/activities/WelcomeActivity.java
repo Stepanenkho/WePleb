@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.epitech.wepleb.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class WelcomeActivity extends BaseActivity implements View.OnClickListener {
 

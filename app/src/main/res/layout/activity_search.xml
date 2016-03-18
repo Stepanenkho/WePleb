@@ -8,7 +8,7 @@
         android:id="@+id/activity_search_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#e74c3c" >
+        android:background="@color/colorPrimary" >
 
         <ImageButton
             android:id="@+id/search_back"
