@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Nom d'utilisateur"
+        android:maxLength="16"
+        android:lines="1"
         android:gravity="center"/>
 
     <EditText
@@ -19,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="Mot de passe"
+        android:lines="1"
+        android:maxLength="16"
         android:inputType="textPassword"
         android:gravity="center"/>
 
