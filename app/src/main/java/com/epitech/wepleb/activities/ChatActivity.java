@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.epitech.wepleb.helpers.PlebSharedPreferences;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -52,12 +53,14 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
     private ParseObject mDiscussion;
     private ParseObject mUser;
     private int messageCount = 0;
+    private PlebSharedPreferences plebSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        plebSharedPreferences = new PlebSharedPreferences(this);
         mToolbar = (Toolbar) findViewById(R.id.activity_chat_toolbar);
         setSupportActionBar(mToolbar);
         mList = (RecyclerView) findViewById(R.id.activity_chat_list);
@@ -162,6 +165,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // SharedPreference add Passphrase
+                                plebSharedPreferences.setPassphrase(mPassphrase.getText().toString());
                             }
                         })
                         .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
