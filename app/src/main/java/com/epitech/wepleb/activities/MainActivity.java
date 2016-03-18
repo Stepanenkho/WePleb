@@ -35,7 +35,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String MESSAGES_FRAGMENT_TAG = "MESSAGES_FRAGMENT_TAG";
     private static final String CONTACTS_FRAGMENT_TAG = "CONTACTS_FRAGMENT_TAG";
@@ -62,7 +62,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         setSupportActionBar(toolbar);
         mContentView = findViewById(R.id.activity_main_container);
         mMessagesButton = (RadioButton) findViewById(R.id.activity_main_tab_messages);
-        mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
         mContactsButton = (RadioButton) findViewById(R.id.activity_main_tab_contacts);
         mProfileButton = (RadioButton) findViewById(R.id.activity_main_tab_profile);
 
@@ -182,24 +181,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             case R.id.activity_main_tab_messages:
                 // TODO Set title
                 toolbar.setTitle("Messages");
-                mMessagesButton.setText(Html.fromHtml("<u>Messages</u>"));
-                mContactsButton.setText("Contacts");
-                mProfileButton.setText("Profil");                placeFragment(MESSAGES_FRAGMENT_TAG);
+                placeFragment(MESSAGES_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_contacts:
                 // TODO Set title
                 toolbar.setTitle("Contacts");
-                mMessagesButton.setText("Messages");
-                mContactsButton.setText(Html.fromHtml("<u>Contacts</u>"));
-                mProfileButton.setText("Profil");
+
                 placeFragment(CONTACTS_FRAGMENT_TAG);
                 break;
             case R.id.activity_main_tab_profile:
                 // TODO Set title
                 toolbar.setTitle("Profil");
-                mMessagesButton.setText("Messages");
-                mContactsButton.setText("Contacts");
-                mProfileButton.setText(Html.fromHtml("<u>Profil</u>"));
+
                 placeFragment(PROFILE_FRAGMENT_TAG);
                 break;
         }
@@ -234,8 +227,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
+        if (result != null) {
+            if (result.getContents() == null) {
                 Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
