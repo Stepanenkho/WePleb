@@ -1,30 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
 
     <ImageView
         android:id="@+id/activity_profile_picture"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:scaleType="centerCrop"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:background="#ffffff"/>
+        android:background="#ffffff"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/activity_profile_username"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        style="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_gravity="center_horizontal"
+        android:alpha="0.75"
+        android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="heyoo?"
-        android:layout_gravity="center_horizontal" />
+        android:textSize="30sp"
+        tools:text="plebasdz" />
 
-    <Button
-        android:id="@+id/activity_profile_messages"
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Messages"/>
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/activity_profile_messages"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="#e74c3c"
+            android:gravity="center"
+            android:text="messages"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:layout_marginTop="50dp"/>
+
+        <Button
+            android:id="@+id/activity_profile_contact"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/activity_profile_messages"
+            android:layout_gravity="center"
+            android:background="#e74c3c"
+            android:gravity="center"
+            android:text="ajouter contact"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:textSize="20sp"
+            android:layout_marginTop="20dp"/>
+
+    </RelativeLayout>
 
 </LinearLayout>
