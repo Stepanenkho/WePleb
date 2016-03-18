@@ -197,15 +197,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             switch (fragmentTag) {
                 case MESSAGES_FRAGMENT_TAG:
                     //fragment = MessagesFragment.newInstance();
-                    toolbar.setTitle("messages");
+                    toolbar.setTitle("Messages");
                     Toast.makeText(MainActivity.this, "Bientot disponible !", Toast.LENGTH_SHORT).show();
                     break;
                 case CONTACTS_FRAGMENT_TAG:
-                    toolbar.setTitle("contacts");
+                    toolbar.setTitle("Contacts");
                     fragment = ContactsFragment.newInstance();
                     break;
                 case PROFILE_FRAGMENT_TAG:
-                    toolbar.setTitle("profil");
+                    toolbar.setTitle("Profil");
                     fragment = ProfileFragment.newInstance();
                     break;
                 default:
