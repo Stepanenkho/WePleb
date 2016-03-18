@@ -114,10 +114,13 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
             public void done(ParseException e) {
                 if (e != null)
                     e.printStackTrace();
-                else
+                else {
                     Snackbar.make(findViewById(android.R.id.content), "Contact ajouté", Snackbar.LENGTH_LONG)
                             .setActionTextColor(Color.RED)
                             .show();
+                    mAddButton.setVisibility(View.GONE);
+                }
+
             }
         });
     }
