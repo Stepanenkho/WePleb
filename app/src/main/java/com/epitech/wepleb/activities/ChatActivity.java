@@ -1,12 +1,14 @@
 package com.epitech.wepleb.activities;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +48,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
     private ParseObject mDiscussion;
     private ParseObject mUser;
+    private int messageCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,64 +69,9 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
             String profileId = extras.getString(EXTRA_PROFILE_ID);
 
             if (discussionId != null) {
-                final ParseQuery<ParseObject> discussionQuery = new ParseQuery<>("Discussions");
-                discussionQuery.whereEqualTo("objectId", discussionId);
-                discussionQuery.include("user1");
-                discussionQuery.include("user2");
-                discussionQuery.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> objects, ParseException e) {
-                        if (e != null || objects == null || objects.size() < 1) {
-                            if (e != null)
-                                e.printStackTrace();
-                            Toast.makeText(ChatActivity.this, "Une erreur est survenue", Toast.LENGTH_SHORT).show();
-                            finish();
-                            return;
-                        }
-
-                        mDiscussion = objects.get(0);
-                        initializeMessagesList();
-                        populateView();
-                    }
-                });
+                loadDiscussion(discussionId);
             } else if (profileId != null) {
-                mUser = ParseObject.createWithoutData("_User", profileId);
-
-                ParseQuery<ParseObject> query1 = new ParseQuery<>("Discussions");
-                query1.whereEqualTo("user1", ParseUser.getCurrentUser());
-                query1.whereEqualTo("user2", mUser);
-                ParseQuery<ParseObject> query2 = new ParseQuery<>("Discussions");
-                query2.whereEqualTo("user1", mUser);
-                query2.whereEqualTo("user2", ParseUser.getCurrentUser());
-                List<ParseQuery<ParseObject>> orQueries = new ArrayList<>();
-                orQueries.add(query1);
-                orQueries.add(query2);
-
-                ParseQuery<ParseObject> discussionQuery = ParseQuery.or(orQueries);
-                discussionQuery.include("user1");
-                discussionQuery.include("user2");
-                discussionQuery.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public void done(List<ParseObject> objects, ParseException e) {
-                        if (e != null) {
-                            e.printStackTrace();
-                            Toast.makeText(ChatActivity.this, "Une erreur est survenue", Toast.LENGTH_SHORT).show();
-                            finish();
-                        }
-
-                        if (objects.size() > 0) {
-                            mDiscussion = objects.get(0);
-                            if (mDiscussion.getParseUser("user1").getObjectId().equals(ParseUser.getCurrentUser().getObjectId()))
-                                mUser = mDiscussion.getParseUser("user2");
-                            else
-                                mUser = mDiscussion.getParseUser("user1");
-                            initializeMessagesList();
-                            populateView();
-                        } else {
-                            createDiscussion();
-                        }
-                    }
-                });
+                loadDiscussionWithProfile(profileId);
             }
         }
     }
@@ -141,9 +89,90 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
         handler.postDelayed(r, 5000);
     }
 
+    private void loadDiscussionWithProfile(String profileId) {
+        mUser = ParseObject.createWithoutData("_User", profileId);
+
+        ParseQuery<ParseObject> query1 = new ParseQuery<>("Discussions");
+        query1.whereEqualTo("user1", ParseUser.getCurrentUser());
+        query1.whereEqualTo("user2", mUser);
+        ParseQuery<ParseObject> query2 = new ParseQuery<>("Discussions");
+        query2.whereEqualTo("user1", mUser);
+        query2.whereEqualTo("user2", ParseUser.getCurrentUser());
+        List<ParseQuery<ParseObject>> orQueries = new ArrayList<>();
+        orQueries.add(query1);
+        orQueries.add(query2);
+
+        ParseQuery<ParseObject> discussionQuery = ParseQuery.or(orQueries);
+        discussionQuery.include("user1");
+        discussionQuery.include("user2");
+        discussionQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    Toast.makeText(ChatActivity.this, "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                if (objects.size() > 0) {
+                    mDiscussion = objects.get(0);
+                    if (mDiscussion.getParseUser("user1").getObjectId().equals(ParseUser.getCurrentUser().getObjectId()))
+                        mUser = mDiscussion.getParseUser("user2");
+                    else
+                        mUser = mDiscussion.getParseUser("user1");
+                    initializeMessagesList();
+                    populateView();
+                } else {
+                    createDiscussion();
+                }
+            }
+        });
+    }
+
+    private void loadDiscussion(String discussionId) {
+        final ParseQuery<ParseObject> discussionQuery = new ParseQuery<>("Discussions");
+        discussionQuery.whereEqualTo("objectId", discussionId);
+        discussionQuery.include("user1");
+        discussionQuery.include("user2");
+        discussionQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e != null || objects == null || objects.size() < 1) {
+                    if (e != null)
+                        e.printStackTrace();
+                    Toast.makeText(ChatActivity.this, "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                mDiscussion = objects.get(0);
+                if (mDiscussion.getParseUser("user1").getObjectId().equals(ParseUser.getCurrentUser().getObjectId()))
+                    mUser = mDiscussion.getParseUser("user2");
+                else
+                    mUser = mDiscussion.getParseUser("user1");
+                initializeMessagesList();
+                populateView();
+            }
+        });
+    }
+
     private void createDiscussion() {
-        // TODO Create discussion
-        Toast.makeText(ChatActivity.this, "No discussion trouvay", Toast.LENGTH_SHORT).show();
+        final ParseObject discussion = ParseObject.create("Discussions");
+        discussion.put("user1", ParseUser.getCurrentUser());
+        discussion.put("user2", mUser);
+        discussion.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                    Toast.makeText(ChatActivity.this, "Une erreur est survenue", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                loadDiscussion(discussion.getObjectId());
+            }
+        });
     }
 
     private void initializeMessagesList() {
@@ -242,6 +271,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
             }
         };
 
+        mAdapter.addOnQueryLoadListener(this);
         mAdapter.reload();
         mList.setAdapter(mAdapter);
         mList.setLayoutManager(new LinearLayoutManager(this));
@@ -254,6 +284,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            mToolbar.getNavigationIcon().setColorFilter(0xFFFFFFFF, PorterDuff.Mode.SRC_ATOP);
         }
     }
 
@@ -296,35 +327,41 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
             mSend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final String input = mChatInput.getText().toString();
-                    if (!input.isEmpty() && mDiscussion != null) {
-                        mChatInput.setEnabled(false);
-                        mSend.setEnabled(false);
-                        final ParseObject message = ParseObject.create("Messages");
-                        message.put("user", ParseUser.getCurrentUser());
-                        message.put("discussion", mDiscussion);
-                        message.put("message", input);
-                        message.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                mChatInput.setEnabled(true);
-                                mSend.setEnabled(true);
-
-                                if (e != null) {
-                                    e.printStackTrace();
-                                    return;
-                                }
-
-                                mChatInput.setText("");
-                                mAdapter.addItem(message);
-                                mAdapter.notifyDataSetChanged();
-                                mList.scrollToPosition(mAdapter.getItemCount() - 1);
-                            }
-                        });
-                    }
+                    sendMessage(mChatInput.getText().toString());
                 }
             });
         }
+    }
+
+    private void sendMessage(String input) {
+        if (input != null && !input.isEmpty() && mDiscussion != null) {
+            //mChatInput.setEnabled(false);
+            mSend.setEnabled(false);
+            final ParseObject message = ParseObject.create("Messages");
+            message.put("user", ParseUser.getCurrentUser());
+            message.put("discussion", mDiscussion);
+            message.put("message", input);
+            message.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    //mChatInput.setEnabled(true);
+                    mSend.setEnabled(true);
+
+                    if (e != null) {
+                        e.printStackTrace();
+                        return;
+                    }
+
+                    mChatInput.setText("");
+                    mAdapter.addItem(message);
+                    mAdapter.notifyDataSetChanged();
+                    mList.scrollToPosition(mAdapter.getItemCount() - 1);
+                }
+            });
+            mDiscussion.put("last_message", message);
+            mDiscussion.saveInBackground();
+        }
+
     }
 
     @Override
@@ -334,7 +371,14 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
             return;
         }
 
-        mList.scrollToPosition(mAdapter.getItemCount() - 1);
+        if (messageCount != objects.size()) {
+            if (messageCount != 0) {
+                mList.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+            } else {
+                mList.scrollToPosition(mAdapter.getItemCount() - 1);
+            }
+            messageCount = objects.size();
+        }
     }
 
     /*
