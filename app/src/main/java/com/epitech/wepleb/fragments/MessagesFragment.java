@@ -16,6 +16,7 @@ import com.epitech.wepleb.R;
 import com.epitech.wepleb.activities.ChatActivity;
 import com.epitech.wepleb.activities.ProfileActivity;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.epitech.wepleb.events.NewMessageEvent;
 import com.epitech.wepleb.helpers.DividerItemDecoration;
 import com.epitech.wepleb.helpers.PlebSharedPreferences;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -24,6 +25,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.scottyab.aescrypt.AESCrypt;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -71,6 +75,8 @@ public class MessagesFragment extends BaseFragment {
                 discussionQuery.include("user1");
                 discussionQuery.include("user2");
                 discussionQuery.include("last_message");
+                discussionQuery.orderByDescending("last_message_time");
+
                 return discussionQuery;
             }
         }) {
@@ -153,8 +159,10 @@ public class MessagesFragment extends BaseFragment {
         mMessagesAdapter.addOnQueryLoadListener(new ParseRecyclerQueryAdapter.OnQueryLoadListener<ParseObject>() {
             @Override
             public void onLoading(ParseRecyclerQueryAdapter adapter) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mMessagesList.setVisibility(View.GONE);
+                if (mMessagesAdapter == null || mMessagesAdapter.getItemCount() == 0) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mMessagesList.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -168,10 +176,33 @@ public class MessagesFragment extends BaseFragment {
         mMessagesList.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMessagesAdapter.reload();
+    }
+
     private void startChatActivity(ParseObject discussion) {
         final Intent chatIntent = new Intent(getContext(), ChatActivity.class);
         chatIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         chatIntent.putExtra(ChatActivity.EXTRA_DISCUSSION_ID, discussion.getObjectId());
         startActivity(chatIntent);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onNewMessageEvent(final NewMessageEvent event) {
+        mMessagesAdapter.loadParseData(0, true);
     }
 }

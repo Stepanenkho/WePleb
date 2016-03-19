@@ -55,7 +55,7 @@ public class PushBroadcastReceiver extends ParsePushBroadcastReceiver {
                         String discussionId = pushData.getString("c");
                         final Intent intentDispatch = new Intent(context, MainActivity.class);
                         //intentDispatch.putExtra(MainActivity.EXTRA_DISPATCH_CHAT, discussionId);
-                        intentDispatch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intentDispatch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         context.startActivity(intentDispatch);
                         break;
                     }

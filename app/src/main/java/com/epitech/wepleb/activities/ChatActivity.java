@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
+import com.epitech.wepleb.events.NewMessageEvent;
 import com.epitech.wepleb.helpers.PlebSharedPreferences;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.FindCallback;
@@ -37,6 +38,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.scottyab.aescrypt.AESCrypt;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -86,6 +90,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
         }
     }
 
+    /*
     private void startAutoRefresh() {
         final Handler handler = new Handler();
 
@@ -98,6 +103,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
         handler.postDelayed(r, 5000);
     }
+    */
 
     private void loadDiscussionWithProfile(String profileId) {
         mUser = ParseObject.createWithoutData("_User", profileId);
@@ -342,7 +348,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
         mAdapter.reload();
         mList.setAdapter(mAdapter);
         mList.setLayoutManager(new LinearLayoutManager(this));
-        startAutoRefresh();
+        //startAutoRefresh();
     }
 
     private void setActionbar() {
@@ -502,4 +508,22 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
     //}
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void onNewMessageEvent(final NewMessageEvent event) {
+        if (event.id.equals(mDiscussion.getObjectId())) {
+            mAdapter.loadParseData(0, true);
+        }
+    }
 }
