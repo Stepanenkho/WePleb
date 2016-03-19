@@ -69,6 +69,15 @@ public class ProfileFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        mUser.put("mood", mMood.getText().toString());
+        mUser.saveInBackground();
+
+        super.onDestroyView();
+
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -90,32 +99,6 @@ public class ProfileFragment extends BaseFragment {
         if (ProfileFragment.this.getContext() != null)
             mMood.getBackground().mutate().setColorFilter(ContextCompat.getColor(ProfileFragment.this.getContext(), R.color.white), PorterDuff.Mode.SRC_ATOP);
 
-        mMood.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(final Editable s) {
-                mUser.put("mood", s.toString());
-                mUser.saveInBackground(new SaveCallback() {
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            mMood.setHint(s.toString());
-                        } else {
-                            if (ProfileFragment.this.getContext() != null)
-                                Toast.makeText(ProfileFragment.this.getContext(), "Une erreur est survenue.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        });
         mQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
