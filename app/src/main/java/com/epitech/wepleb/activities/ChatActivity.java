@@ -368,8 +368,10 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                     mList.scrollToPosition(mAdapter.getItemCount() - 1);
                 }
             });
+            /*
             mDiscussion.put("last_message", message);
             mDiscussion.saveInBackground();
+            */
         }
 
     }

@@ -29,6 +29,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseImageView;
+import com.parse.ParseInstallation;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -159,6 +161,11 @@ public class ProfileFragment extends BaseFragment {
                 ParseUser.logOut();
                 if (ProfileFragment.this.getContext() != null)
                     Toast.makeText(ProfileFragment.this.getContext(), "Déconnecté !", Toast.LENGTH_SHORT).show();
+
+                ParseObject parseInstallation = ParseInstallation.getCurrentInstallation();
+                parseInstallation.remove("user");
+                parseInstallation.saveInBackground();
+
                 startWelcomeActivity();
                 getActivity().finishAffinity();
             }
