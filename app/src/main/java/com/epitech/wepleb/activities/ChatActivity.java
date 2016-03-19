@@ -269,6 +269,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                         ImageLoader.getInstance().displayImage(pictureUrl, viewHolder.pictureRight);
                     }
 
+                    /*
                     viewHolder.pictureRight.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -277,6 +278,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                             mContext.startActivity(intent);
                         }
                     });
+                    */
 
                     viewHolder.message.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.rounded_grey));
                 } else {
