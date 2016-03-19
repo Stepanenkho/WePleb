@@ -15,12 +15,12 @@ public class PlebSharedPreferences {
         editor = sharedPreferences.edit();
     }
 
-    public void setPassphrase(String pass) {
-        editor.putString("passphrase", pass);
+    public void setPassphrase(String objectID, String pass) {
+        editor.putString(objectID, pass);
         editor.commit();
     }
 
-    public String getPassphrase() {
-        return sharedPreferences.getString("passphrase", null);
+    public String getPassphrase(String objectID) {
+        return sharedPreferences.getString(objectID,"");
     }
 }

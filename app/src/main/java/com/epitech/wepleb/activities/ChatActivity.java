@@ -3,9 +3,11 @@ package com.epitech.wepleb.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +36,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.scottyab.aescrypt.AESCrypt;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +66,6 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
         plebSharedPreferences = new PlebSharedPreferences(this);
         mToolbar = (Toolbar) findViewById(R.id.activity_chat_toolbar);
-        setSupportActionBar(mToolbar);
         mList = (RecyclerView) findViewById(R.id.activity_chat_list);
         mChatInput = (EditText) findViewById(R.id.activity_chat_input);
         mSend = (TextView) findViewById(R.id.activity_chat_send);
@@ -139,11 +142,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        MenuItem search = menu.getItem(R.id.action_search);
-        search.setVisible(false);
-        MenuItem qrCode = menu.getItem(R.id.action_qrcode_add);
-        qrCode.setVisible(false);
+        inflater.inflate(R.menu.chat_menu, menu);
         return true;
     }
 
@@ -153,19 +152,19 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.action_add:
+            case R.id.action_password:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 LayoutInflater inflater = getLayoutInflater();
                 View view = inflater.inflate(R.layout.dialog_profile_username, null);
                 TextView title = (TextView) view.findViewById(R.id.dialog_profile_title);
                 title.setText("Passphrase");
-                final EditText mPassphrase = (EditText) view.findViewById(R.id.dialog_profile_username);
+                final EditText mPassphraseEditText = (EditText) view.findViewById(R.id.dialog_profile_username);
                 builder.setView(view)
                         .setPositiveButton("Ajouter", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // SharedPreference add Passphrase
-                                plebSharedPreferences.setPassphrase(mPassphrase.getText().toString());
+                                String mPassphrase = mPassphraseEditText.getText().toString();
+                                plebSharedPreferences.setPassphrase(mDiscussion.getObjectId(), mPassphrase);
                             }
                         })
                         .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
@@ -302,8 +301,16 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
                     viewHolder.message.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.rounded_primary));
                 }
-
-                viewHolder.message.setText(message.getString("message"));
+                if (plebSharedPreferences.getPassphrase(mDiscussion.getObjectId()).matches(""))
+                    viewHolder.message.setText(message.getString("message"));
+                else {
+                    try {
+                        String translated = AESCrypt.decrypt(plebSharedPreferences.getPassphrase(mDiscussion.getObjectId()), message.getString("message"));
+                        viewHolder.message.setText(translated);
+                    } catch (GeneralSecurityException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             class MessageItemViewHolder extends RecyclerView.ViewHolder {
@@ -387,32 +394,41 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
     }
 
     private void sendMessage(String input) {
-        if (input != null && !input.isEmpty() && mDiscussion != null) {
+        if (plebSharedPreferences.getPassphrase(mDiscussion.getObjectId()).matches("")) {
+            Snackbar.make(findViewById(android.R.id.content), "Veuillez mettre un mot de passe grâce au clef en haut", Snackbar.LENGTH_LONG)
+                    .setActionTextColor(Color.RED)
+                    .show();
+        }
+        else if (input != null && !input.isEmpty() && mDiscussion != null) {
             //mChatInput.setEnabled(false);
-            mSend.setEnabled(false);
-            final ParseObject message = ParseObject.create("Messages");
-            message.put("user", ParseUser.getCurrentUser());
-            message.put("discussion", mDiscussion);
-            message.put("message", input);
-            message.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    //mChatInput.setEnabled(true);
-                    mSend.setEnabled(true);
+            try {
+                mSend.setEnabled(false);
+                final ParseObject message = ParseObject.create("Messages");
+                message.put("user", ParseUser.getCurrentUser());
+                message.put("discussion", mDiscussion);
+                message.put("message", AESCrypt.encrypt(plebSharedPreferences.getPassphrase(mDiscussion.getObjectId()), input));
+                message.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        //mChatInput.setEnabled(true);
+                        mSend.setEnabled(true);
 
-                    if (e != null) {
-                        e.printStackTrace();
-                        return;
+                        if (e != null) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        mChatInput.setText("");
+                        mAdapter.addItem(message);
+                        mAdapter.notifyDataSetChanged();
+                        mList.scrollToPosition(mAdapter.getItemCount() - 1);
                     }
-
-                    mChatInput.setText("");
-                    mAdapter.addItem(message);
-                    mAdapter.notifyDataSetChanged();
-                    mList.scrollToPosition(mAdapter.getItemCount() - 1);
-                }
-            });
-            mDiscussion.put("last_message", message);
-            mDiscussion.saveInBackground();
+                });
+                mDiscussion.put("last_message", message);
+                mDiscussion.saveInBackground();
+            } catch (GeneralSecurityException e) {
+                e.printStackTrace();
+            }
         }
 
     }
