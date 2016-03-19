@@ -6,11 +6,13 @@
     android:orientation="horizontal"
     android:padding="10dp">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/item_contact_profile_picture"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@color/com_facebook_button_background_color" />
+        app:civ_border_width="2dp"
+        app:civ_border_color="#6340a5"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

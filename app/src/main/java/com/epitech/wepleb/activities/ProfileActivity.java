@@ -54,6 +54,7 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
         mChatButton.setOnClickListener(this);
         mAddButton.setOnClickListener(this);
 
+        mAddButton.setVisibility(View.INVISIBLE);
         mUser = ParseUser.getCurrentUser();
         mContact = (ParseUser) ParseObject.createWithoutData("_User", getIntent().getStringExtra(EXTRA_PROFILE_ID));
         mContact.fetchInBackground(new GetCallback<ParseObject>() {
@@ -78,8 +79,8 @@ public class ProfileActivity extends BaseActivity implements View.OnClickListene
                             if (e != null)
                                 e.printStackTrace();
                             else {
-                                if (objects.size() != 0) {
-                                    mAddButton.setVisibility(View.GONE);
+                                if (objects.size() == 0) {
+                                    mAddButton.setVisibility(View.VISIBLE);
                                 }
                             }
                         }
