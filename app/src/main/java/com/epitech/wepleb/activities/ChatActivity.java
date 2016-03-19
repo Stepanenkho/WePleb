@@ -309,6 +309,10 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                         viewHolder.message.setText(translated);
                     } catch (GeneralSecurityException e) {
                         e.printStackTrace();
+                        viewHolder.message.setText(message.getString("message"));
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                        viewHolder.message.setText(message.getString("message"));
                     }
                 }
             }
