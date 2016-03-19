@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.epitech.wepleb.activities.MainActivity;
+import com.epitech.wepleb.utils.LifecycleHandler;
 import com.facebook.FacebookSdk;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -31,6 +32,7 @@ public class WePlebApplication extends Application {
         //FacebookSdk.sdkInitialize(getApplicationContext());
         //ParseFacebookUtils.initialize(this);
         InitializeImageLoader();
+        registerActivityLifecycleCallbacks(new LifecycleHandler());
     }
 
 

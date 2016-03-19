@@ -28,6 +28,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -67,6 +68,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mContactsButton.setOnClickListener(this);
         mProfileButton.setOnClickListener(this);
 
+        saveInstallation();
         placeFragment(MESSAGES_FRAGMENT_TAG);
     }
 
@@ -75,6 +77,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mUsernameText.setText(mUser.getUsername());
     }
     */
+
+    private void saveInstallation() {
+        if (ParseUser.getCurrentUser() != null) {
+            ParseObject parseInstallation = ParseInstallation.getCurrentInstallation();
+            parseInstallation.put("user", ParseUser.getCurrentUser());
+            parseInstallation.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
