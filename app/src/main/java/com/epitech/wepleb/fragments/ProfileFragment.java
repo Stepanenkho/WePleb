@@ -7,10 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ import android.widget.Toast;
 
 import com.epitech.wepleb.R;
 import com.epitech.wepleb.activities.WelcomeActivity;
+import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
@@ -29,6 +34,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseImageView;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -48,6 +55,7 @@ public class ProfileFragment extends BaseFragment {
     private ImageView mPictureImage;
     private ImageLoader imageLoader;
     private ImageView mQrCode;
+    private EditText mMood;
 
 
     public static ProfileFragment newInstance() {
@@ -61,6 +69,15 @@ public class ProfileFragment extends BaseFragment {
     }
 
     @Override
+    public void onDestroyView() {
+        mUser.put("mood", mMood.getText().toString());
+        mUser.saveInBackground();
+
+        super.onDestroyView();
+
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -68,9 +85,19 @@ public class ProfileFragment extends BaseFragment {
         mDisconnect = (TextView) view.findViewById(R.id.fragment_profile_disconnect);
         mPassword = (TextView) view.findViewById(R.id.fragment_profile_password);
         mQrCode = (ImageView) view.findViewById(R.id.fragment_profile_qrcode);
+        mMood = (EditText) view.findViewById(R.id.fragment_profile_mood);
 
         mUser = ParseUser.getCurrentUser();
         mUsernameText.setText(mUser.getUsername());
+
+        if (mUser.getString("mood") == null)
+            mMood.setHint("Exprimez-vous !");
+        else {
+            mMood.setText(mUser.getString("mood"));
+        }
+
+        if (ProfileFragment.this.getContext() != null)
+            mMood.getBackground().mutate().setColorFilter(ContextCompat.getColor(ProfileFragment.this.getContext(), R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         mQrCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +134,7 @@ public class ProfileFragment extends BaseFragment {
                         })
                         .setNegativeButton("Galerie", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(galleryIntent, GALLERY_PICTURE_REQUEST_CODE);
                             }
                         });
@@ -130,7 +157,7 @@ public class ProfileFragment extends BaseFragment {
                                 EditText input = (EditText) view.findViewById(R.id.dialog_profile_password);
                                 mUser.setPassword(input.getText().toString().trim());
                                 mUser.saveInBackground(new SaveCallback() {
-                                    public void done(com.parse.ParseException e) {
+                                    public void done(ParseException e) {
                                         if (e == null) {
                                             if (ProfileFragment.this.getContext() != null)
                                                 Toast.makeText(ProfileFragment.this.getContext(), "Succès !", Toast.LENGTH_SHORT).show();
@@ -179,7 +206,7 @@ public class ProfileFragment extends BaseFragment {
                                     Toast.makeText(ProfileFragment.this.getContext(), input.getText().toString(), Toast.LENGTH_SHORT).show();
                                 mUser.setUsername(input.getText().toString().trim());
                                 mUser.saveInBackground(new SaveCallback() {
-                                    public void done(com.parse.ParseException e) {
+                                    public void done(ParseException e) {
                                         if (e == null) {
                                             mUsernameText.setText(mUser.getUsername());
                                         } else {
