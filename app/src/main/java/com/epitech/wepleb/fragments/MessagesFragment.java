@@ -2,7 +2,6 @@ package com.epitech.wepleb.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,12 +17,15 @@ import com.epitech.wepleb.activities.ChatActivity;
 import com.epitech.wepleb.activities.ProfileActivity;
 import com.epitech.wepleb.adapters.ParseRecyclerQueryAdapter;
 import com.epitech.wepleb.helpers.DividerItemDecoration;
+import com.epitech.wepleb.helpers.PlebSharedPreferences;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.scottyab.aescrypt.AESCrypt;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,8 @@ public class MessagesFragment extends BaseFragment {
     private FrameLayout mProgressBar;
     private RecyclerView mMessagesList;
     private ParseRecyclerQueryAdapter<ParseObject> mMessagesAdapter;
+    private PlebSharedPreferences plebSharedPreferences;
+
 
     public static MessagesFragment newInstance() {
         return new MessagesFragment();
@@ -40,6 +44,8 @@ public class MessagesFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (getContext() != null)
+            plebSharedPreferences = new PlebSharedPreferences(getContext());
         return inflater.inflate(R.layout.fragment_messages, container, false);
     }
 
@@ -98,7 +104,25 @@ public class MessagesFragment extends BaseFragment {
                 ParseObject lastMessage = discussion.getParseObject("last_message");
                 if (lastMessage != null) {
                     viewHolder.lastMessage.setVisibility(View.VISIBLE);
-                    viewHolder.lastMessage.setText(lastMessage.getString("message"));
+                    try {
+                        String translated = AESCrypt.decrypt(plebSharedPreferences.getPassphrase(lastMessage.getParseObject("discussion").getObjectId()), lastMessage.getString("message"));
+                        viewHolder.lastMessage.setText(lastMessage.getParseUser("user").getObjectId()
+                                .equals(ParseUser.getCurrentUser().getObjectId()) ?
+                                "Vous : " + translated :
+                                translated);
+                    } catch (GeneralSecurityException e) {
+                        e.printStackTrace();
+                        viewHolder.lastMessage.setText(lastMessage.getParseUser("user").getObjectId()
+                                .equals(ParseUser.getCurrentUser().getObjectId()) ?
+                                "Vous : " + lastMessage.getString("message") :
+                                lastMessage.getString("message"));
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                        viewHolder.lastMessage.setText(lastMessage.getParseUser("user").getObjectId()
+                                .equals(ParseUser.getCurrentUser().getObjectId()) ?
+                                "Vous : " + lastMessage.getString("message") :
+                                lastMessage.getString("message"));
+                    }
                 } else {
                     viewHolder.lastMessage.setVisibility(View.GONE);
                 }

@@ -165,6 +165,7 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
                             public void onClick(DialogInterface dialog, int which) {
                                 String mPassphrase = mPassphraseEditText.getText().toString();
                                 plebSharedPreferences.setPassphrase(mDiscussion.getObjectId(), mPassphrase);
+                                mAdapter.reload();
                             }
                         })
                         .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
