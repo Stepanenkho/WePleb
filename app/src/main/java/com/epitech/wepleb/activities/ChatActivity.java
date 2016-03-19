@@ -408,11 +408,11 @@ public class ChatActivity extends BaseActivity implements ParseRecyclerQueryAdap
 
     private void sendMessage(String input) {
         if (plebSharedPreferences.getPassphrase(mDiscussion.getObjectId()).matches("")) {
-            Snackbar.make(findViewById(android.R.id.content), "Veuillez mettre un mot de passe grâce au clef en haut", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(android.R.id.content), "Veuillez valider votre passephrase", Snackbar.LENGTH_LONG)
                     .setActionTextColor(Color.RED)
                     .show();
         }
-        else if (input != null && !input.isEmpty() && mDiscussion != null) {
+        else if (input.trim() != null && !input.isEmpty() && mDiscussion != null) {
             //mChatInput.setEnabled(false);
             try {
                 mSend.setEnabled(false);
