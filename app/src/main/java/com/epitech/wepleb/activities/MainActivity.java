@@ -242,10 +242,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Log.d("MainActivity", "Cancelled scan");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
-                Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
-                profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                profileIntent.putExtra(ChatActivity.EXTRA_PROFILE_ID, result.getContents());
-                startActivity(profileIntent);
+                if (result.getContents().matches(ParseUser.getCurrentUser().getObjectId())){
+                    Snackbar.make(findViewById(android.R.id.content), "Le petit pleb a voulu trix ?", Snackbar.LENGTH_LONG)
+                            .setActionTextColor(Color.RED)
+                            .show();
+                }
+                else {
+                    Intent profileIntent = new Intent(MainActivity.this, ProfileActivity.class);
+                    profileIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    profileIntent.putExtra(ChatActivity.EXTRA_PROFILE_ID, result.getContents());
+                    startActivity(profileIntent);
+                }
             }
         } else {
             // This is important, otherwise the result will not be passed to the fragment
